@@ -1,157 +1,148 @@
-Image of the Day → MongoDB Atlas → Live Power BI Dashboard (Scheduled Refresh)
+treamlit Image Classification → MongoDB Atlas → Live Power BI Dashboard (Scheduled Refresh)
 📌 Project Overview
 
-This project is an end-to-end data pipeline + analytics system that automatically fetches today’s image (from a public image source/API), stores it in a cloud MongoDB Atlas database, and exposes it to Power BI for a live dashboard experience using scheduled refresh.
+This project is an end-to-end cloud-based image analytics and visualization system where users interact through a Streamlit web application to select a specific image category (e.g., Nature, Animals, Technology, Art). Based on the selected category, the system fetches and classifies images, displays them in real time, captures user engagement (likes count), and stores all interaction data in a MongoDB Atlas cloud database.
 
-The goal is to simulate a real production workflow where data ingestion + cloud storage + BI reporting happens continuously and updates dashboards automatically.
+The stored cloud data is then consumed by Power BI to build a live dashboard that updates automatically using scheduled refresh, simulating a real-world production data pipeline.
 
 🔗 End-to-End Workflow
+1️⃣ User Interaction (Streamlit App)
 
-Daily Image Fetch (Automated)
+User opens the Streamlit application
 
-A script / Node.js service runs daily (cron / scheduler)
+Selects a desired image category
 
-Fetches today’s image + metadata like:
+Classified images related to that category are displayed
 
-title / category / tags
+User can like images, generating engagement data
 
-source url
+Each interaction triggers a backend update
 
-date
+2️⃣ Image Fetching & Classification
 
-author (if available)
+Images are fetched from a public image source / API
 
-image thumbnail or base64 (optional)
+A classification model validates or assigns the image category
 
-Cloud Storage (MongoDB Atlas)
+Only images matching the selected category are shown
 
-The fetched record is stored as a document in MongoDB Atlas (cloud)
+Metadata extracted:
 
-Each document is timestamped (createdAt, date)
+Image URL / thumbnail
 
-Duplicate prevention logic (avoid saving same image twice)
+Category (predicted & selected)
 
-Backend API Layer (Node.js + Express)
+Source
 
-REST endpoints like:
+Date & timestamp
 
-GET /images/today
+3️⃣ Cloud Storage (MongoDB Atlas)
 
-GET /images?date=...
+All image metadata and user interaction data are stored in MongoDB Atlas (cloud)
 
-GET /images/latest
+Each record includes:
 
-This API acts as the clean data access layer for BI tools and apps
-
-Power BI Integration
-
-Power BI connects to the dataset using:
-
-MongoDB/Atlas connector approach, or
-
-ODBC/Atlas SQL/BI Connector route, or
-
-Web/API connector (Power Query calling your Node API)
-
-Dashboard shows latest image + trends
-
-Scheduled Refresh (Power BI Service)
-
-Report published to Power BI Service
-
-Scheduled refresh enabled (hourly/daily)
-
-Refresh uses a configured gateway if required (common for MongoDB/ODBC connections). 
-MongoDB
-+2
-MongoDB
-+2
-
-🏗️ Architecture
-Daily Scheduler (Cron / Cloud Scheduler)
-           ↓
-Image Fetch Service (Node.js/Python)
-           ↓
-MongoDB Atlas (Cloud)
-           ↓
-Node.js Express API (Data Access Layer)
-           ↓
-Power BI Dataset + Dashboard
-           ↓
-Scheduled Refresh (Power BI Service)
-
-🗄️ MongoDB Atlas Data Model (Example)
-
-Each record saved in MongoDB Atlas includes:
-
-date (today’s date)
+category
 
 image_url
 
-thumbnail_url (optional)
-
-title
-
-category/tags
+likes_count
 
 source
 
 createdAt
 
-This structure makes it easy for Power BI to build visuals like:
+Duplicate handling to prevent re-storing the same image
 
-Images per day
+Acts as the single source of truth
 
-Category distribution
+4️⃣ Backend API Layer (Node.js / Python API)
 
-Latest image card
+Streamlit communicates with backend services
 
-Source-wise breakdown
+REST APIs handle:
 
-Weekly/monthly trends
+Image retrieval by category
 
-📊 Power BI Dashboard (Auto Updating)
+Like count updates
 
-The dashboard is built on cloud data and includes:
+Data exposure for analytics
 
-✅ “Today’s Image” Card (latest record)
+Provides a clean data access layer for BI tools
 
-✅ Daily/weekly image count trend
+5️⃣ Power BI Integration
 
-✅ Category & tags distribution
+Power BI connects to MongoDB Atlas using:
 
-✅ Source analytics (which provider gives most images)
+Atlas SQL / BI Connector, or
 
-✅ Date filter for historical navigation
+Power BI Web API connector
 
-Scheduled refresh ensures dashboards stay updated without manual effort. 
-MongoDB
-+1
+Cloud data is imported into Power BI datasets
 
-⚙️ Key Technical Highlights
+Dashboards reflect:
 
-Cloud-native database (MongoDB Atlas)
+Category-wise image distribution
 
-Automated ingestion pipeline (daily scheduler)
+Likes per image
 
-REST API for data sharing (Node.js Express)
+Most popular categories
 
-Business Intelligence integration (Power BI)
+Daily / weekly engagement trends
 
-Scheduled refresh pipeline (Power BI Service + gateway when needed) 
-MongoDB
-+1
+6️⃣ Scheduled Refresh (Power BI Service)
 
-🧰 Tech Stack
+Power BI report published to Power BI Service
 
-Node.js + Express (API + ingestion service)
+Scheduled refresh enabled (hourly / daily)
 
-MongoDB Atlas (cloud database)
+Optional gateway configuration if required
 
-Power BI (dashboarding + scheduled refresh)
+Dashboards update automatically without manual intervention
 
-Optional:
+🏗️ System Architecture
+User (Streamlit UI)
+        ↓
+Image Fetch + Classification
+        ↓
+MongoDB Atlas (Cloud Database)
+        ↓
+Backend API (Node.js / Python)
+        ↓
+Power BI Dataset & Dashboard
+        ↓
+Scheduled Refresh (Power BI Service)
 
-Cron / Cloud Scheduler (automation)
+🗄️ MongoDB Atlas Data Model (Example)
 
-Docker (deployment)
+Each document stored includes:
+
+category
+
+image_url
+
+thumbnail_url (optional)
+
+likes_count
+
+source
+
+createdAt
+
+This schema enables efficient analytics and dashboarding.
+
+📊 Power BI Dashboard (Auto-Updating)
+
+The Power BI dashboard includes:
+
+✅ Category-wise image count
+
+✅ Top liked images
+
+✅ Likes trend over time
+
+✅ Popular categories ranking
+
+✅ Date and category filters
+
+Dashboards stay up-to-date using scheduled refresh, ensuring real-time visibility into user engagement and image trends.
